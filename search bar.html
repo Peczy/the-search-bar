@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>search bar</title>
+    <script src="https://kit.fontawesome.com/b12f651b82.js" crossorigin="anonymous"></script>
+    <script src="gsap.min.js"></script>
+</head>
+<style>
+    :root {
+        --border-color: #303030;
+        --background: #121212;
+    }
+    * {
+        box-sizing: border-box;
+        transition: .3s;
+    }
+    body {
+        position: relative;
+        margin: 0;
+        display: grid;
+        justify-items: center;
+        height: 100vh;
+        width: 100vw;
+        font-size: 1.5rem;
+        background: linear-gradient(205deg, var(--border-color), var(--background));
+        overflow: clip;
+    }
+    .container {
+        position: relative;
+        display: flex;
+        top: 35%;
+        align-items: center;
+        width: 60%;
+        background: var(--background);
+        height: 3rem;
+        overflow: clip;
+        color: white;
+        border: 1px solid var(--border-color);
+        border-radius: 3rem;
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    .search {
+        display: flex;
+        align-items: center;
+        border-radius: 1.5rem 0 0 1.5rem;
+        flex-grow: 1;
+        height: 100%;
+        overflow: hidden;
+        transition: unset;
+    }
+    .right {
+        background: #1a1a1a;
+        position: relative;
+        display: grid;
+        right: 0;
+        border-left: 1px solid var(--border-color);
+    }
+    .right:hover {
+        /*background: hsl(0, 0%, 15%);*/
+        background: royalblue;
+    }
+    .text_box {
+        border: none;
+        outline: none;
+        background: transparent;
+        flex-grow: 1;
+        padding: 0 .5rem 0 1.2rem;
+        height: 100%;
+        font-size: 1.3rem;
+        color: var(--border-color);
+    }
+    .text_box:focus {
+        caret-color: white;
+        outline: none;
+        background: transparent;
+        font-size: 1.5rem;
+        color: white;
+    }
+    .text_box::placeholder{
+        font-size: 1.5rem;
+    }
+    .left, .right {
+        width: 4rem;
+        height: 100%;
+        place-items: center;
+    }
+    .left {
+        display: grid;
+        width: 0;
+        transform: scale(0);
+    }
+    .x {
+        padding: 0 1rem 0 0;
+        display: none;
+        opacity: 0;
+        cursor: pointer;
+        transform: scale(1);
+        transition: .2s all;
+    }
+    .x:hover {
+        transform: scale(1.05);
+        color: royalblue;
+    }
+    .intro {
+        position: absolute;
+        height: 100%;
+        width: 100vw;
+        color: white;
+        background: black;
+        z-index: 1;
+        margin: 0;
+        padding: 0;
+    }
+    .intro * {
+        transition: unset;
+    }
+    .h1, .p {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .h1 {
+        font-size: 400%;
+        top: 32vh;
+    }
+    .p {
+        top: 50vh;
+        opacity: 0;
+
+    }
+    .fa-heart {
+        color: red;
+    }
+
+    @media (max-width: 1300px){
+        .h1 {
+            font-size: 7vw;
+        }
+        .container {
+            width: 90%;
+            transform: scale(0.5);
+        }
+        body {
+            font-size: 1rem;
+        }
+
+    }
+
+ </style>
+<body>
+<div class="intro">
+    <h1 class="h1">The Search Bar</h1>
+    <p class="p">Made with <i class="fa-solid fa-heart"></i> by Pecz</p>
+</div>
+<div class="container">
+    <div class="search">
+        <div class="left"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <input class="text_box" type="text" placeholder="Search">
+        <i class="fa-solid fa-xmark x"></i>
+    </div>
+    <div class="right"><i class="fa-solid fa-magnifying-glass"></i></div>
+</div>
+
+<script>
+    let text_box = document.querySelector(".text_box");
+    let x = document.querySelector(".x");
+    let search = document.querySelector(".search");
+    let left_search = document.querySelector(".left");
+
+    function validate(){
+        if(text_box.value.trim() !== "" && text_box.value.length > 0){
+        gsap.to(x, {opacity: 1, display: "grid"})
+    }
+    else{
+        gsap.to(x, {opacity: 0, display: "none"})
+    }}
+    function text_box_on_focus() {
+        text_box.addEventListener("focus", () => {
+            validate()
+            left_search.style.transform = "scale(1)";
+            left_search.style.width = "3rem";
+            left_search.style.marginRight = "-1rem";
+            search.style.border = "1px solid royalblue";
+            text_box.addEventListener("input", () => {
+                validate()
+            })
+        })
+    }
+    function text_box_off_focus() {
+        text_box.addEventListener("blur", () => {
+            validate()
+            left_search.style.transform = "scale(0)";
+            left_search.style.width = "0";
+            left_search.style.marginRight = "0";
+            search.style.border = "none";
+        })
+    }
+    function x_icon(){
+        x.addEventListener("click", () => {
+            text_box.value = "";
+            text_box.focus();
+        })
+    }
+    function animations(){
+        const timeline = gsap.timeline({defaults: {duration: 1, ease: "expo.inOut"}, onComplete: ()=> text_box.focus()})
+
+        timeline
+            .to(".p", {opacity: 1}, 1)
+            .to(".h1", {top: "5vh"}, 2)
+            .to(".p", {top: 'revert', bottom: 0}, 2)
+            .to(".intro", {background: "transparent", zIndex: 0}, 2)
+            .to(".container", {opacity: 1, scale: 1, ease: "elastic.inOut"})
+            .to(['.h1', ".p"], {duration: 1, color: "#848884"}, 3.5)
+    }
+
+
+    text_box_on_focus()
+    text_box_off_focus()
+    x_icon()
+    animations()
+
+
+
+</script>
+</body>
+</html>
